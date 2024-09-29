@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Healthcare Facilities in Nasarawa State</title>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDRmiifuK7g7r6DCkMQjgL0uksKn950UU0&libraries=places"></script>
+    <script>
+      function initialize() {
+        var nasarawa = { lat: 8.4920, lng: 8.5241 };
+        var map = new google.maps.Map(document.getElementById("map"), {
+          center: nasarawa,
+          zoom: 10,
+        });
+
+        var service = new google.maps.places.PlacesService(map);
+
+        var searchQueries = ["hospitals", "clinics", "pharmacies", "urgent care", "medical centers"];
+
+        function searchHealthcareFacilities(query) {
+          service.textSearch(
+            {
+              query: query,
+              location: nasarawa,
+              radius: 50000, // 50km radius
+            },
+            function (results, status) {
+              if (status === google.maps.places.PlacesServiceStatus.OK) {
+                for (var i = 0; i < results.length; i++) {
+                  createMarker(results[i]);
+                }
+              }
+            }
+          );
+        }
+
+        // Perform searches for each query in the array
+        for (var i = 0; i < searchQueries.length; i++) {
+          searchHealthcareFacilities(searchQueries[i]);
+        }
+
+        function createMarker(place) {
+          var marker = new google.maps.Marker({
+            map: map,
+            position: place.geometry.location,
+          });
+
+          var infowindow = new google.maps.InfoWindow();
+          google.maps.event.addListener(marker, "click", function () {
+            infowindow.setContent(
+              "<strong>" + place.name + "</strong><br>" +
+              place.formatted_address
+            );
+            infowindow.open(map, this);
+          });
+        }
+      }
+
+      google.maps.event.addDomListener(window, "load", initialize);
+    </script>
+    <style>
+      #map {
+        height: 100vh;
+        width: 100%;
+      }
+    </style>
+  </head>
+  <body>
+    <h3>Healthcare Facilities in Nasarawa State</h3>
+    <div id="map"></div>
+  </body>
+</html>
